@@ -1,16 +1,14 @@
-package Fabric;
+package Fabric.World;
 
-import Fabric.Enums.Element;
 import Fabric.Objects.Path;
-import Fabric.Objects.Rat;
 import Fabric.Objects.Target;
 import Fabric.Objects.Wall;
-import Fabric.UI.UI;
+import Fabric.Types.UI;
 
 public class Maze {
 
-    Cell[][] cells;
-    UI ui;
+    public Cell[][] cells;
+    private final UI ui;
 
     public Maze(Cell[][] cells, UI ui){
         this.cells = cells;
@@ -22,11 +20,11 @@ public class Maze {
     }
 
     public int getWidth(){
-        return cells.length;
+        return cells[0].length;
     }
 
     public int getHeight(){
-        return cells[0].length;
+        return cells[1].length;
     }
 
     public void generateMaze() {
@@ -39,24 +37,24 @@ public class Maze {
          * Precisa spawnar o alvo no canto direito inferior do labirinto
          */
 
-        // lógica de geração de labirinto
+        // Geração de labirinto de teste
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
-                if (j >= 1 && j <= getHeight() - 2 & i >= 1 && i <= getWidth() - 2) {
-                    cells[i][j] = new Cell(new Path());
+                if (i == 0 || j == 0 || i == getWidth() - 1 || j == getHeight() - 1) {
+                    cells[i][j] = new Cell(new Path(ui, this));
                 } else {
-                    cells[i][j] = new Cell(new Wall());
+                    cells[i][j] = new Cell(new Wall(ui, this));
                 }
             }
         }
 
         // Depois que terminar a geração do labirinto
 
+
         // Definição da posição do alvo
-        cells[getWidth() - 2][getHeight() - 2] = new Cell(new Target());
+        cells[getWidth() - 2][getHeight() - 2] = new Cell(new Target(ui, this));
 
         // Desenhar a tela quando tudo acabar
-
         ui.draw();
     }
 
