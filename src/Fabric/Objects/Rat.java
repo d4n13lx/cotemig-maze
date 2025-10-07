@@ -1,20 +1,24 @@
 package Fabric.Objects;
 
-import Fabric.Types.Element;
 import Fabric.Types.UI;
 import Fabric.World.AvailablePath;
-import Fabric.World.Maze;
+import Fabric.World.Block;
 
 import java.util.Stack;
 
 public class Rat extends GameObject {
 
     private Stack<AvailablePath> history;
+    private Block[][] blocks;
 
-    public Rat(UI ui, Maze maze) {
-        super(ui, maze);
-        maze.cells[1][1].add(this);
+    public Rat(Block[][] blocks) {
+        super();
+        this.blocks = blocks;
+        spawn();
+    }
 
+    private void spawn() {
+        this.blocks[1][1].add(this);
         history = new Stack<>();
     }
 

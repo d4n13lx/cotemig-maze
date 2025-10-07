@@ -6,18 +6,18 @@ import Fabric.Objects.Wall;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Cell {
-    // Nesta lógica, um Cell é capaz de armazenar vários objetos do tipo GameObject
+public class Block {
+    // Nesta lógica, um Block é capaz de armazenar vários objetos do tipo GameObject
 
-    // Uma matriz de Cell (ex. `Cell[][]`) já é o labirinto
+    // Uma matriz de Block (ex. `Block[][]`) já é o labirinto
 
-    List<GameObject> objects = new ArrayList<>();
+    private List<GameObject> objects = new ArrayList<>();
 
-    public Cell(GameObject gameObject) {
+    public Block(GameObject gameObject) {
         add(gameObject);
     }
 
-    public Cell(GameObject[] gameObject) {
+    public Block(GameObject[] gameObject) {
         for (GameObject g : gameObject) {
             add(g);
         }
@@ -43,5 +43,13 @@ public class Cell {
         }
 
         return false;
+    }
+
+    public List<GameObject> getObjects() {
+        return objects;
+    }
+
+    public GameObject getFirstObject() {
+        return objects.getFirst();
     }
 }

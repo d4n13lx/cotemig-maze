@@ -1,33 +1,40 @@
 package Fabric.UI;
 
+import Fabric.Objects.*;
 import Fabric.Types.Element;
 import Fabric.Types.UI;
+import Fabric.World.Block;
 import Fabric.World.Maze;
 
-public class Console implements UI {
-    Maze maze;
+import javax.management.ObjectInstance;
 
-    public Console(Maze maze) {
-        this.maze = maze;
+public class Console implements UI {
+    private Block[][] blocks;
+
+    public Console(Block[][] blocks) {
+        this.blocks = blocks;
     }
 
     @Override
     public void draw() {
         clear();
         String canvas = "";
-        for (int i = 0; i < maze.getWidth(); i++) {
-            for (int j = 0; j < maze.getHeight(); j++) {
-                switch (maze.getCell(i, j)) {
-                    default -> {}
-                    case Element.WALL -> canvas += "⬛";
-                    case Element.PATH -> canvas += "▪️";
-                    case Element.TARGET -> canvas += "🧀";
-                    case Element.HUNTER -> canvas += "🐀";
+        for (int i = 0; i < blocks[0].length; i++) {
+            for (int j = 0; j < blocks[1].length; j++) {
+                GameObject object = blocks[i][j].getFirstObject();
+                if (object instanceof Wall) {
+                    canvas += "⬛";
+                } else if (object instanceof Path) {
+                    canvas += "▪️";
+                } else if (object instanceof Rat) {
+                    canvas += "🐀";
+                } else if (object instanceof Target) {
+                    canvas += "🧀";
                 }
             }
-            System.out.println(canvas);
-            canvas = "";
+            canvas += "\n";
         }
+        System.out.println(canvas);
     }
 
     @Override

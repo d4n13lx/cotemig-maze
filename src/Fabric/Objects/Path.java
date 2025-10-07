@@ -5,7 +5,7 @@ import Fabric.World.Maze;
 
 public class Path extends GameObject {
 
-    public Path(UI ui, Maze maze) {
-        super(ui, maze);
+    public Path() {
+        super();
     }
 }

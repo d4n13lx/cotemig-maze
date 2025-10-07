@@ -6,7 +6,7 @@ import Fabric.World.Maze;
 
 public class Target extends GameObject {
 
-    public Target(UI ui, Maze maze) {
-        super(ui, maze, Element.TARGET);
+    public Target() {
+        super();
     }
 }
