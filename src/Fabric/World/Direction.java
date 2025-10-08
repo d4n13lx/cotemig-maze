@@ -1,4 +1,4 @@
-package Fabric.Types;
+package Fabric.World;
 
 public enum Direction {
     UP(-1, 0),
@@ -20,6 +20,13 @@ public enum Direction {
 
     public int y() {
         return this.y;
+    }
+
+    public int xOpposite() {
+        return this.x * -1;
+    }
+    public int yOpposite() {
+        return this.y * -1;
     }
 }
 
