@@ -4,7 +4,7 @@ import Fabric.Types.UI;
 
 import java.util.UUID;
 
-public abstract class GameObject {
+public abstract class GameObject extends Thread {
 
 
     protected UUID id;
@@ -22,7 +22,7 @@ public abstract class GameObject {
         this.y = y;
     }
 
-    public UUID getId() {
+    public UUID getUUID() {
         return id;
     }
 

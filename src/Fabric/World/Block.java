@@ -52,4 +52,8 @@ public class Block {
     public GameObject getFirstObject() {
         return objects.getFirst();
     }
+
+    public void removeAll() {
+        objects.clear();
+    }
 }

@@ -1,20 +1,28 @@
 package Main;
 
-import Fabric.Objects.Rat;
+import Fabric.Objects.Rat.Rat;
+import Fabric.Objects.Winner;
 import Fabric.UI.Console;
 import Fabric.World.Block;
-import Fabric.World.Maze;
+import Fabric.World.MazeGenerator;
 
 public class Program {
     public static void main(String[] args) {
-        Block[][] blocks = new Block[41][41];
-        Console console = new Console(blocks);
+        Block[][] blocks = new Block[11][11];
+        Console ui = new Console(blocks);
 
-        Maze maze = new Maze(blocks);
-        maze.buildTestMaze();
+        MazeGenerator.buildTestMaze(blocks);
 
-        Rat rato = new Rat(blocks);
+        long waitTime = 200;
+        Winner winner = new Winner();
 
-        rato.scan();
+        Rat rato = new Rat(blocks, winner, waitTime, ui);
+
+        rato.backtrack();
+
+        System.out.println("ACHOU");
+        winner.toString();
+
+
     }
 }
