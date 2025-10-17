@@ -14,10 +14,9 @@ public class Console implements UI {
 
     @Override
     public void draw() {
-        clear();
         String canvas = "";
-        for (int i = 0; i < blocks[0].length; i++) {
-            for (int j = 0; j < blocks[1].length; j++) {
+        for (int i = 0; i < blocks.length; i++) {
+            for (int j = 0; j < blocks[0].length; j++) {
                 GameObject object = blocks[i][j].getObjects().getLast();
                 if (object instanceof Wall) {
                     canvas += "⬛";
@@ -27,6 +26,8 @@ public class Console implements UI {
                     canvas += "🐀";
                 } else if (object instanceof Target) {
                     canvas += "🧀";
+                } else {
+                    canvas += "🔸";
                 }
             }
             canvas += "\n";

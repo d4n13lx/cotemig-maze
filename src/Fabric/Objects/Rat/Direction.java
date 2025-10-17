@@ -12,12 +12,14 @@ public enum Direction {
             return UP;
         }
     },
+
     LEFT(0, 1) {
         public Direction opposite() {
             return RIGHT;
         }
     },
-    RIGHT(0, -1) {
+    RIGHT
+            (0, -1) {
         public Direction opposite() {
             return LEFT;
         }

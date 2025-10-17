@@ -9,20 +9,17 @@ import Fabric.World.MazeGenerator;
 public class Program {
     public static void main(String[] args) {
         Block[][] blocks = new Block[11][11];
+
         Console ui = new Console(blocks);
 
-        MazeGenerator.buildTestMaze(blocks);
+        MazeGenerator.buildMaze(blocks);
 
-        long waitTime = 200;
+        long waitTime = 750;
+
         Winner winner = new Winner();
 
         Rat rato = new Rat(blocks, winner, waitTime, ui);
 
-        rato.backtrack();
-
-        System.out.println("ACHOU");
-        winner.toString();
-
-
+        rato.solve();
     }
 }
