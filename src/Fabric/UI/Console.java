@@ -14,28 +14,45 @@ public class Console implements UI {
 
     @Override
     public void draw() {
-        clear();
-        String canvas = "";
-        for (int i = 0; i < blocks[0].length; i++) {
-            for (int j = 0; j < blocks[1].length; j++) {
+        StringBuilder canvas = new StringBuilder();
+        for (int i = 0; i < blocks.length; i++) {
+            for (int j = 0; j < blocks[0].length; j++) {
+            	
+            	if (blocks[i][j] == null) {
+            		canvas.append("# ");
+            		continue;
+            	}
+            	if (blocks[i][j].getObjects().isEmpty()) {
+            		canvas.append("  ");
+            		continue;
+            	}
+            	
                 GameObject object = blocks[i][j].getObjects().getLast();
+                
                 if (object instanceof Wall) {
-                    canvas += "⬛";
+                	canvas.append("# ");
                 } else if (object instanceof Floor) {
-                    canvas += "▪️";
+                	canvas.append("  ");
                 } else if (object instanceof Rat) {
-                    canvas += "🐀";
+                    canvas.append("🐀");
                 } else if (object instanceof Target) {
-                    canvas += "🧀";
+                    canvas.append("🧀");
+                } else if (object instanceof Path) {
+                	canvas.append(". ");
+                } else {
+                	canvas.append("  ");
                 }
             }
-            canvas += "\n";
+            canvas.append("\n");
         }
-        System.out.println(canvas);
+        System.out.println(canvas.toString());
     }
 
     @Override
     public void clear() {
-        System.out.print("\033[H\033[2J");
+    	for (int i = 0; i < 50; i++) {
+    		System.out.println();
+    	}
+        
     }
 }
