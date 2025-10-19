@@ -4,52 +4,87 @@ import Fabric.Objects.*;
 import Fabric.Types.UI;
 import Fabric.World.Block;
 
-import javax.crypto.spec.PSource;
 import javax.swing.JOptionPane;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
-public class Rat extends GameObject {
+public class Rat extends GameObject implements Runnable {
 
     private Block[][] blocks;
     private Winner winner;
     private long waitTime;
     private final UI ui;
-
     private Stack<History> history = new Stack<>();
-
-    public Rat(Block[][] blocks, Winner winner, long waitTime, UI ui) {
+    
+    private int startX;
+    private int startY;
+    
+    public Rat(Block[][] blocks, Winner winner, long waitTime, UI ui, int startX, int startY) {
         super();
         this.blocks = blocks;
         this.winner = winner;
         this.waitTime = waitTime;
         this.ui = ui;
-        this.blocks[1][1] = new Block(this);
+        this.startX = startX;
+        this.startY = startY;
+        
+        synchronized(blocks) {
+        	if (this.blocks[startX][startY] == null) {
+        		this.blocks[startX][startY] = new Block(new Floor());
+        	}
+        	this.blocks[startX][startY].getObjects().add(this);
+        }
     }
-
+    
+    @Override
+    public void run() {
+    	this.solve();
+    }
+    
     public void solve() {
-        if (backtrack(1, 1)) {
-            triggerEndGame();
-            JOptionPane.showMessageDialog(null, "Queijo Achado!");
-        } else {
-            JOptionPane.showMessageDialog(null, "Labirinto Sem Solução");
+        if (winner.getWinner() != null) return;
+        
+        if (backtrack(this.startX, this.startY)) {
+        	triggerEndGame();
+        	
+        	if (winner.getWinner() == this) {
+        		JOptionPane.showMessageDialog(null, "Rato " + getUUID() + " achou o Queijo!");
+        	}
         }
     }
 
     private boolean backtrack(final int x, final int y) {
-        if (getTopObject(x, y) instanceof Target) return true;
+    	if (winner.getWinner() != null) return false;
 
         for (Direction direction : randomizeMoves()) {
+        	if (winner.getWinner() != null) return false;
+        	
             int stepX = x + direction.x();
             int stepY = y + direction.y();
-
+            
+            GameObject nextStepObject;
+            
+            synchronized(blocks) {
+            	nextStepObject = getLastObject(stepX, stepY);
+            }
+            
+            if (nextStepObject instanceof Target) {
+            	stepUpRat(stepX, stepY, direction);
+            	render();
+            	return true;
+            }
+            
             if (isSafe(stepX, stepY) && !isExplored(stepX, stepY)) {
                 render();
                 stepUpRat(stepX, stepY, direction);
 
                 if (backtrack(stepX, stepY)) return true;
+                
+                if (winner.getWinner() != null) return false;
 
                 render();
                 stepBackRat(x, y);
@@ -60,35 +95,77 @@ public class Rat extends GameObject {
 
     private boolean isSafe(final int x, final int y) {
         boolean isOnBounds = x >= 1 && x < getRowLength() - 1 && y >= 1 && y < getCollumLength() - 1;
+        if (!isOnBounds) return false;
+        
+        boolean isBlocked;
+        synchronized(blocks) {
+        	GameObject topObject = getLastObject(x, y);
+        	
+        	isBlocked = (topObject instanceof Wall) || (topObject instanceof Rat) ||
+        			(topObject instanceof Path && ((Path)topObject).getRat() != this);
+        }
 
-        boolean isWall = getTopObject(x, y) instanceof Wall;
-
-        return isOnBounds && !isWall;
+        return !isBlocked;
     }
 
     private boolean isExplored(final int x, final int y) {
-        for (GameObject object : getAllObjects(x, y)) {
-            if (object instanceof Path) {
-                if (((Path) object).getRat() == this) return true;
-            }
+        List<GameObject> objectsCopy;
+        
+        synchronized(blocks) {
+        	Block block = blocks[x][y];
+        	
+        	if (block == null) return false;
+        	
+        	objectsCopy = new ArrayList<>(block.getObjects());
+        }
+        
+        for (GameObject object : objectsCopy) {
+        	if (object instanceof Path) {
+        		if (((Path) object).getRat() == this) return true;
+        	}
         }
         return false;
     }
-
-    private List<GameObject> getAllObjects(final int x, final int y) {
-        return blocks[x][y].getObjects();
+    
+    private GameObject getLastObject(final int x, final int y) {
+    	Block block = blocks[x][y];
+    	
+    	if (block == null || block.getObjects().isEmpty()) {
+    		return null;
+    	}
+    	
+    	return block.getObjects().getLast();
     }
 
+    
     private GameObject getTopObject(final int x, final int y) {
+    	if (blocks[x][y] == null) {
+    		return null;
+    	}
+    	
+    	if (blocks[x][y].getObjects().isEmpty()) {
+    		return null;
+    	}
+    	
         return blocks[x][y].getObjects().getFirst();
     }
 
     private GameObject getBottomObject(final int x, final int y) {
-        return blocks[x][y].getObjects().getLast();
+        if (blocks[x][y] == null) {
+        	return null;
+        }
+        
+        if (blocks[x][y].getObjects().isEmpty()) {
+        	return null;
+        }
+        
+    	return blocks[x][y].getObjects().getLast();
     }
 
     private void triggerEndGame() {
-        this.winner.setWinner(this);
+        synchronized (winner) {
+        	winner.setWinner(this);
+        }
     }
 
     private Direction[] randomizeMoves() {
@@ -109,7 +186,8 @@ public class Rat extends GameObject {
         try {
             Thread.sleep(waitTime);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
+        	Thread.currentThread().interrupt();
         }
     }
 
@@ -122,16 +200,20 @@ public class Rat extends GameObject {
 
         blocks[stepX][stepY].getObjects().remove(this);
         blocks[stepX][stepY].getObjects().add(path);
+        
+        if (blocks[x][y] == null) {
+        	blocks[x][y] = new Block(new Floor());
+        }
+        
         blocks[x][y].getObjects().add(this);
     }
 
     private void stepBackRat(final int oldX, final int oldY) {
         History back = history.pop();
-        blocks[oldX][oldY].getObjects().remove(history.peek().path());
-        blocks[oldX][oldY].getObjects().add(this);
-
+        
         blocks[back.x()][back.y()].getObjects().remove(this);
-        blocks[back.x()][back.y()].getObjects().remove(back.path());
+        blocks[oldX][oldY].getObjects().remove(back.path());
+        blocks[oldX][oldY].getObjects().add(this);
     }
 
     private int getRowLength() {
@@ -143,8 +225,11 @@ public class Rat extends GameObject {
     }
 
     private void render() {
-        ui.clear();
-        ui.draw();
+    	synchronized(blocks) {
+    		ui.clear();
+            ui.draw();
+    	}
+        
         freeze();
     }
 
