@@ -11,12 +11,15 @@ public class Winner {
         return winner;
     }
 
-    public void setWinner(Rat winner) {
-        this.winner = winner;
+    public synchronized void setWinner(Rat winner) {
+    	if (this.winner == null) {
+    		this.winner = winner;
+    	}
     }
-
+    
     @Override
     public String toString() {
         return "Vencedor: " + getWinner();
     }
+    
 }

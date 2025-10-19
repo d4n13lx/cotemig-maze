@@ -1,4 +1,6 @@
 package Fabric.Objects.Rat;
 
 
-public record History (int x, int y) {}
+import Fabric.Objects.Path;
+
+public record History (int x, int y, Path path) {}
