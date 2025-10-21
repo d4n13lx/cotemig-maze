@@ -19,7 +19,7 @@ public class Console implements UI {
             for (int j = 0; j < blocks[0].length; j++) {
             	
             	if (blocks[i][j] == null) {
-            		canvas.append("# ");
+            		canvas.append("█");
             		continue;
             	}
             	if (blocks[i][j].getObjects().isEmpty()) {
@@ -30,29 +30,30 @@ public class Console implements UI {
                 GameObject object = blocks[i][j].getObjects().getLast();
                 
                 if (object instanceof Wall) {
-                	canvas.append("# ");
+                	canvas.append("█");
                 } else if (object instanceof Floor) {
-                	canvas.append("  ");
+                	canvas.append(" ");
                 } else if (object instanceof Rat) {
-                    canvas.append("🐀");
+                    canvas.append("R");
                 } else if (object instanceof Target) {
-                    canvas.append("🧀");
+                    canvas.append("Q");
                 } else if (object instanceof Path) {
-                	canvas.append(". ");
+                	canvas.append(" ");
                 } else {
-                	canvas.append("  ");
+                	canvas.append("█");
                 }
             }
             canvas.append("\n");
         }
-        System.out.println(canvas.toString());
+        System.out.println(canvas);
     }
 
     @Override
     public void clear() {
+        StringBuilder canvas = new StringBuilder();
     	for (int i = 0; i < 50; i++) {
-    		System.out.println();
+            canvas.append("\n");
     	}
-        
+        System.out.println(canvas);
     }
 }
