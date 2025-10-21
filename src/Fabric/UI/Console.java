@@ -6,6 +6,11 @@ import Fabric.Types.UI;
 import Fabric.World.Block;
 
 public class Console implements UI {
+
+    private final String ANSI_RESET = "\u001B[0m";
+    private final String ANSI_CHEESE = "\u001B[33m";
+    private final String ANSI_WALL = "\u001B[34m";
+    private final String ANSI_RAT = "\u001B[37m";
     private Block[][] blocks;
 
     public Console(Block[][] blocks) {
@@ -22,6 +27,7 @@ public class Console implements UI {
             		canvas.append("█");
             		continue;
             	}
+                
             	if (blocks[i][j].getObjects().isEmpty()) {
             		canvas.append("  ");
             		continue;
@@ -30,15 +36,15 @@ public class Console implements UI {
                 GameObject object = blocks[i][j].getObjects().getLast();
                 
                 if (object instanceof Wall) {
-                	canvas.append("█");
+                	canvas.append(ANSI_WALL + "█" + ANSI_RESET);
                 } else if (object instanceof Floor) {
                 	canvas.append(" ");
                 } else if (object instanceof Rat) {
-                    canvas.append("R");
+                    canvas.append(ANSI_RAT + "█" + ANSI_RESET);
                 } else if (object instanceof Target) {
-                    canvas.append("Q");
+                    canvas.append(ANSI_CHEESE + "█" + ANSI_RESET);
                 } else if (object instanceof Path) {
-                	canvas.append(" ");
+                	canvas.append("-");
                 } else {
                 	canvas.append("█");
                 }
