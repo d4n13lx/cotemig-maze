@@ -18,7 +18,7 @@ O projeto implementa uma simulação de labirinto com os seguintes recursos:
 
 Antes de começar, verifique se você atendeu aos seguintes requisitos:
 
-- Java Corretto 24 instalado e configurado corretamente no PATH do sistema.
+- [Java Amazon Corretto 24](https://docs.aws.amazon.com/corretto/latest/corretto-24-ug/downloads-list.html) instalado e configurado corretamente no PATH do sistema.
 
 - Variável de ambiente JAVA_HOME apontando para a instalação do Java Corretto 24.
 
@@ -34,6 +34,10 @@ Este é um projeto Java padrão, sem dependências externas.
 2. Abra o projeto em sua IDE Java (Eclipse, IntelliJ, VS Code).
 3. Execute a classe principal: `Main/Program.java`.
 
+
+## 👥 Contribuidores
+
+> Colaboradores do projeto: [Pedro Ávila Dressler](https://github.com/PedroDressler), [Daniel Damazo Kazimoto](https://github.com/d4n13lx) & [Matheus Felipe Rodrigues Leitão](https://github.com/Matheusss25)
 
 ## 📫 Contribuindo
 
@@ -52,6 +56,8 @@ Para colaborar com o projeto, siga o fluxo abaixo:
 
 
 ## 📝 Licença
+
+[Amazon Corretto JDK 24](https://aws.amazon.com/pt/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc)
 
 Esse projeto está sob a licença [MIT](https://choosealicense.com/licenses/mit/). Veja o arquivo para mais detalhes.
 
