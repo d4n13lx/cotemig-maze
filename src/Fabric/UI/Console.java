@@ -27,7 +27,7 @@ public class Console implements UI {
             		canvas.append("█");
             		continue;
             	}
-                
+
             	if (blocks[i][j].getObjects().isEmpty()) {
             		canvas.append("  ");
             		continue;
