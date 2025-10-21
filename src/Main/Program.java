@@ -13,11 +13,17 @@ import java.util.Random;
 
 public class Program {
     public static void main(String[] args) {
-    	final int MAZE_HEIGHT = Integer.parseInt(JOptionPane.showInputDialog("Digite a altura do labirinto (blocos).\n\nOBS.: O número precisa ser ímpar, se a entrada for par,\nserá incrementada +1 no entrada"));; // Números ímpares funciona melhor para o DFS
-    	final int MAZE_WIDTH = Integer.parseInt(JOptionPane.showInputDialog("Digite a largura do labirinto (blocos).\n\nOBS.: O número precisa ser ímpar, se a entrada for par,\nserá incrementada +1 no entrada"));;
-    	final int N_RATS = Integer.parseInt(JOptionPane.showInputDialog("Quantos ratos irão para o gulag?"));;
+    	final int MAZE_HEIGHT = Integer.parseInt(JOptionPane.showInputDialog(
+				"Digite a altura do labirinto (blocos).\n\n" +
+				"OBS.: O número precisa ser ímpar, se a entrada for par,\nserá incrementada +1 no entrada"));
 
-    	final long WAIT_TIME = 0;
+    	final int MAZE_WIDTH = Integer.parseInt(JOptionPane.showInputDialog(
+				"Digite a largura do labirinto (blocos).\n\n" +
+				"OBS.: O número precisa ser ímpar, se a entrada for par,\nserá incrementada +1 no entrada"));
+
+    	final int N_RATS = Integer.parseInt(JOptionPane.showInputDialog("Quantos ratos irão para o gulag?"));
+
+    	final long WAIT_TIME = 1000;
     	
         Block[][] blocks = new Block[MAZE_HEIGHT][MAZE_WIDTH];
         Console ui = new Console(blocks);
