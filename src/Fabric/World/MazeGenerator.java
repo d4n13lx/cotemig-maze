@@ -6,6 +6,7 @@ import Fabric.Objects.Wall;
 
 import java.util.Collections;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class MazeGenerator {
@@ -44,7 +45,7 @@ public class MazeGenerator {
         blocks[blocks.length - 2][blocks[0].length - 2] = new Block(new Target());
     }
 
-    public static void buildMaze(Block[][] blocks) {
+    public static void buildMaze(Block[][] blocks, List<int[]> availableFloorTiles) {
         /* TODO: implementar algoritmo de geração do labirinto
          * Precisa spawnar o caçador no canto esquerdo superior do labirinto
          * Precisa spawnar o alvo no canto direito inferior do labirinto
@@ -55,7 +56,7 @@ public class MazeGenerator {
     		}
     	}
     	
-    	carvePassages(blocks, 1, 1, new Random());
+    	carvePassages(blocks, 1, 1, new Random(), availableFloorTiles);
     	
     	int targetX = blocks.length - 2;
     	int targetY = blocks[0].length - 2;
@@ -66,7 +67,7 @@ public class MazeGenerator {
     	blocks[targetX][targetY] = new Block(new Target());
     }
     
-    public static void carvePassages(Block[][] blocks, int x, int y, Random rand) {
+    public static void carvePassages(Block[][] blocks, int x, int y, Random rand, List<int[]> availableFloorTiles) {
     	blocks[x][y] = new Block(new Floor());
     	
     	MazeDirection[] directions = MazeDirection.values();
@@ -79,10 +80,12 @@ public class MazeGenerator {
     		if (newX > 0 && newX < blocks.length - 1 && newY > 0 && newY < blocks[0].length - 1) {
     			
     			if (blocks[newX][newY].isWall()) {
-    				
+
     				blocks[x + dir.pathX][y + dir.pathY] = new Block(new Floor());
-    				
-    				carvePassages(blocks, newX, newY, rand);
+
+					availableFloorTiles.add(new int[] {x + dir.pathX, y + dir.pathY});
+
+    				carvePassages(blocks, newX, newY, rand, availableFloorTiles);
     			}
     		}
     	}

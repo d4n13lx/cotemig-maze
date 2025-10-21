@@ -50,10 +50,6 @@ public class Rat extends GameObject implements Runnable {
         
         if (backtrack(this.startX, this.startY)) {
         	triggerEndGame();
-        	
-        	if (winner.getWinner() == this) {
-        		JOptionPane.showMessageDialog(null, "Rato " + getUUID() + " achou o Queijo!");
-        	}
         }
     }
 
@@ -231,6 +227,10 @@ public class Rat extends GameObject implements Runnable {
     	}
         
         freeze();
+    }
+
+    public int getStepsTaken() {
+        return this.history.size();
     }
 
 }
