@@ -62,7 +62,7 @@ public class Program {
         
         if (winner.getWinner() != null) {
 			JOptionPane.showMessageDialog(null, "	BATTLE ROYALE #1\n\n" +
-					"O rato " + winner.getWinner().getUUID() + " achou o queijo!\n" +
+					"O rato " + winner.getWinner().getID() + " achou o queijo!\n" +
 					"Ele deu " + winner.getWinner().getStepsTaken() + " passo(s) para a vitória.");
         } else {
         	System.out.println("Nenhum rato encontrou o queijo");

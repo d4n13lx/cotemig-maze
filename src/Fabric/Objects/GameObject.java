@@ -1,18 +1,15 @@
 package Fabric.Objects;
 
-import Fabric.Types.UI;
-
-import java.util.UUID;
-
 public abstract class GameObject {
 
-    protected UUID id;
+    protected int id;
+    private static int increment = 1;
 
     public GameObject() {
-        this.id = UUID.randomUUID();
+        this.id = increment++;
     }
 
-    public UUID getUUID() {
+    public int getID() {
         return id;
     }
 }
