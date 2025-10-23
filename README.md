@@ -57,7 +57,5 @@ Para colaborar com o projeto, siga o fluxo abaixo:
 
 ## 📝 Licença
 
-[Amazon Corretto JDK 24](https://aws.amazon.com/pt/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc)
-
 Esse projeto está sob a licença [MIT](https://choosealicense.com/licenses/mit/). Veja o arquivo para mais detalhes.
 
