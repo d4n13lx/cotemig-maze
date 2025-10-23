@@ -45,6 +45,10 @@ public class Block {
         return false;
     }
 
+    public boolean isEmpty() {
+        return objects.isEmpty();
+    }
+
     public List<GameObject> getObjects() {
         return objects;
     }

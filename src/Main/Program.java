@@ -1,37 +1,43 @@
 package Main;
 
 import Fabric.Objects.Rat.Rat;
+import Fabric.Objects.Target;
 import Fabric.Objects.Winner;
 import Fabric.UI.Console;
 import Fabric.World.Block;
-import Fabric.World.MazeGenerator;
+import Fabric.World.Maze;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Program {
     public static void main(String[] args) {
-    	final int MAZE_HEIGHT = Integer.parseInt(JOptionPane.showInputDialog(
-				"Digite a altura do labirinto (blocos).\n\n" +
-				"OBS.: O número precisa ser ímpar, se a entrada for par,\nserá incrementada +1 no entrada"));
+        Scanner scanner = new Scanner(System.in);
 
-    	final int MAZE_WIDTH = Integer.parseInt(JOptionPane.showInputDialog(
-				"Digite a largura do labirinto (blocos).\n\n" +
-				"OBS.: O número precisa ser ímpar, se a entrada for par,\nserá incrementada +1 no entrada"));
+        System.out.print("Digite a altura do labirinto (blocos).\n> ");
 
-    	final int N_RATS = Integer.parseInt(JOptionPane.showInputDialog("Quantos ratos irão para o gulag?"));
+    	final int MAZE_HEIGHT = scanner.nextInt();
 
-    	final long WAIT_TIME = 1000;
+        System.out.print("Digite a largura do labirinto (blocos).\n> ");
+
+    	final int MAZE_WIDTH = scanner.nextInt();
+
+        System.out.println("Quantos ratos irão para o gulag?");
+
+    	final int N_RATS = scanner.nextInt();
+
+    	final long WAIT_TIME = 300;
     	
-        Block[][] blocks = new Block[MAZE_HEIGHT][MAZE_WIDTH];
-        Console ui = new Console(blocks);
+        Maze maze = new Maze(MAZE_HEIGHT, MAZE_WIDTH);
+        Console ui = new Console(maze);
         Winner winner = new Winner();
         Random rand = new Random();
 
         List<int[]> availableFloorTiles = new ArrayList<>();
-        MazeGenerator.buildMaze(blocks, availableFloorTiles);
+        maze.buildMaze(availableFloorTiles);
         
         List<Thread> ratThreads = new ArrayList<>();
         
@@ -40,12 +46,12 @@ public class Program {
         for (int i = 0; i < N_RATS; i++) {
         	int[] startPos = availableFloorTiles.remove(rand.nextInt(availableFloorTiles.size()));
         	
-        	if (blocks[startPos[0]][startPos[1]].getObjects().getFirst() instanceof Fabric.Objects.Target) {
+        	if (maze.getTopObject(startPos[0], startPos[1]) instanceof Target) {
         		i--;
         		continue;
         	}
         	
-        	Rat rato = new Rat(blocks, winner, WAIT_TIME, ui, startPos[0], startPos[1]);
+        	Rat rato = new Rat(maze, winner, WAIT_TIME, ui, startPos[0], startPos[1]);
         	
         	Thread ratThread = new Thread(rato);
         	ratThreads.add(ratThread);

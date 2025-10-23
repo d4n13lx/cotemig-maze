@@ -1,10 +1,10 @@
 package Fabric.Objects.Rat;
 
 import Fabric.Objects.*;
-import Fabric.Types.UI;
+import Fabric.Types.RatDirection;
+import Fabric.UI.UI;
 import Fabric.World.Block;
-
-import javax.swing.JOptionPane;
+import Fabric.World.Maze;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,7 @@ import java.util.Stack;
 
 public class Rat extends GameObject implements Runnable {
 
-    private Block[][] blocks;
+    private Maze maze;
     private Winner winner;
     private long waitTime;
     private final UI ui;
@@ -23,60 +23,56 @@ public class Rat extends GameObject implements Runnable {
     private int startX;
     private int startY;
     
-    public Rat(Block[][] blocks, Winner winner, long waitTime, UI ui, int startX, int startY) {
+    public Rat(Maze maze, Winner winner, long waitTime, UI ui, int startX, int startY) {
         super();
-        this.blocks = blocks;
+        this.maze = maze;
         this.winner = winner;
         this.waitTime = waitTime;
         this.ui = ui;
         this.startX = startX;
         this.startY = startY;
         
-        synchronized(blocks) {
-        	if (this.blocks[startX][startY] == null) {
-        		this.blocks[startX][startY] = new Block(new Floor());
+        synchronized(maze.getAllBlocks()) {
+            if (maze.getBlock(startX, startY) == null) {
+                maze.setBlock(startX, startY, new Floor());
         	}
-        	this.blocks[startX][startY].getObjects().add(this);
+            maze.add(startX, startY, this);
         }
     }
     
     @Override
     public void run() {
-    	this.solve();
-    }
-    
-    public void solve() {
         if (winner.getWinner() != null) return;
-        
+
         if (backtrack(this.startX, this.startY)) {
-        	triggerEndGame();
+            triggerEndGame();
         }
     }
 
     private boolean backtrack(final int x, final int y) {
     	if (winner.getWinner() != null) return false;
 
-        for (Direction direction : randomizeMoves()) {
+        for (RatDirection ratDirection : randomizeMoves()) {
         	if (winner.getWinner() != null) return false;
         	
-            int stepX = x + direction.x();
-            int stepY = y + direction.y();
+            int stepX = x + ratDirection.x();
+            int stepY = y + ratDirection.y();
             
             GameObject nextStepObject;
             
-            synchronized(blocks) {
+            synchronized(maze.getAllBlocks()) {
             	nextStepObject = getLastObject(stepX, stepY);
             }
             
             if (nextStepObject instanceof Target) {
-            	stepUpRat(stepX, stepY, direction);
+            	stepUpRat(stepX, stepY, ratDirection);
             	render();
             	return true;
             }
             
             if (isSafe(stepX, stepY) && !isExplored(stepX, stepY)) {
                 render();
-                stepUpRat(stepX, stepY, direction);
+                stepUpRat(stepX, stepY, ratDirection);
 
                 if (backtrack(stepX, stepY)) return true;
                 
@@ -90,11 +86,11 @@ public class Rat extends GameObject implements Runnable {
     }
 
     private boolean isSafe(final int x, final int y) {
-        boolean isOnBounds = x >= 1 && x < getRowLength() - 1 && y >= 1 && y < getCollumLength() - 1;
+        boolean isOnBounds = x >= 1 && x < maze.heigth() - 1 && y >= 1 && y < maze.width() - 1;
         if (!isOnBounds) return false;
         
         boolean isBlocked;
-        synchronized(blocks) {
+        synchronized(maze.getAllBlocks()) {
         	GameObject topObject = getLastObject(x, y);
         	
         	isBlocked = (topObject instanceof Wall) || (topObject instanceof Rat) ||
@@ -107,8 +103,8 @@ public class Rat extends GameObject implements Runnable {
     private boolean isExplored(final int x, final int y) {
         List<GameObject> objectsCopy;
         
-        synchronized(blocks) {
-        	Block block = blocks[x][y];
+        synchronized(maze.getAllBlocks()) {
+        	Block block = maze.getBlock(x, y);
         	
         	if (block == null) return false;
         	
@@ -124,7 +120,7 @@ public class Rat extends GameObject implements Runnable {
     }
     
     private GameObject getLastObject(final int x, final int y) {
-    	Block block = blocks[x][y];
+    	Block block = maze.getBlock(x, y);
     	
     	if (block == null || block.getObjects().isEmpty()) {
     		return null;
@@ -133,47 +129,22 @@ public class Rat extends GameObject implements Runnable {
     	return block.getObjects().getLast();
     }
 
-    
-    private GameObject getTopObject(final int x, final int y) {
-    	if (blocks[x][y] == null) {
-    		return null;
-    	}
-    	
-    	if (blocks[x][y].getObjects().isEmpty()) {
-    		return null;
-    	}
-    	
-        return blocks[x][y].getObjects().getFirst();
-    }
-
-    private GameObject getBottomObject(final int x, final int y) {
-        if (blocks[x][y] == null) {
-        	return null;
-        }
-        
-        if (blocks[x][y].getObjects().isEmpty()) {
-        	return null;
-        }
-        
-    	return blocks[x][y].getObjects().getLast();
-    }
-
     private void triggerEndGame() {
         synchronized (winner) {
         	winner.setWinner(this);
         }
     }
 
-    private Direction[] randomizeMoves() {
-        List<Direction> directions = Arrays.asList(Direction.values());
-        Direction[] availableDirections = new Direction[directions.size()];
-        Collections.shuffle(directions);
+    private RatDirection[] randomizeMoves() {
+        List<RatDirection> ratDirections = Arrays.asList(RatDirection.values());
+        RatDirection[] availableRatDirections = new RatDirection[ratDirections.size()];
+        Collections.shuffle(ratDirections);
 
-        for (int i = 0; i < directions.size(); i++) {
-            availableDirections[i] = directions.get(i);
+        for (int i = 0; i < ratDirections.size(); i++) {
+            availableRatDirections[i] = ratDirections.get(i);
         }
 
-        return availableDirections;
+        return availableRatDirections;
     }
 
     private void freeze() {
@@ -182,46 +153,38 @@ public class Rat extends GameObject implements Runnable {
         try {
             Thread.sleep(waitTime);
         } catch (InterruptedException e) {
-            // e.printStackTrace();
+            e.printStackTrace();
         	Thread.currentThread().interrupt();
         }
     }
 
-    private void stepUpRat(final int x, final int y, Direction direction) {
-        int stepX = x - direction.x();
-        int stepY = y - direction.y();
+    private void stepUpRat(final int x, final int y, RatDirection ratDirection) {
+        int stepX = x - ratDirection.x();
+        int stepY = y - ratDirection.y();
 
         Path path = new Path(this);
         history.push(new History(x, y, path));
 
-        blocks[stepX][stepY].getObjects().remove(this);
-        blocks[stepX][stepY].getObjects().add(path);
+        maze.remove(stepX, stepY, this);
+        maze.add(stepX, stepY, path);
         
-        if (blocks[x][y] == null) {
-        	blocks[x][y] = new Block(new Floor());
+        if (maze.getBlock(x, y) == null) {
+            maze.setBlock(x, y, new Floor());
         }
-        
-        blocks[x][y].getObjects().add(this);
+
+        maze.add(x, y, this);
     }
 
     private void stepBackRat(final int oldX, final int oldY) {
         History back = history.pop();
-        
-        blocks[back.x()][back.y()].getObjects().remove(this);
-        blocks[oldX][oldY].getObjects().remove(back.path());
-        blocks[oldX][oldY].getObjects().add(this);
-    }
 
-    private int getRowLength() {
-        return blocks.length;
-    }
-
-    private int getCollumLength() {
-        return blocks[0].length;
+        maze.remove(back.x(), back.y(), this);
+        maze.remove(oldX, oldY, back.path());
+        maze.add(oldX, oldY, this);
     }
 
     private void render() {
-    	synchronized(blocks) {
+    	synchronized(maze.getAllBlocks()) {
     		ui.clear();
             ui.draw();
     	}

@@ -2,8 +2,8 @@ package Fabric.UI;
 
 import Fabric.Objects.*;
 import Fabric.Objects.Rat.Rat;
-import Fabric.Types.UI;
 import Fabric.World.Block;
+import Fabric.World.Maze;
 
 public class Console implements UI {
 
@@ -11,29 +11,30 @@ public class Console implements UI {
     private final String ANSI_CHEESE = "\u001B[33m";
     private final String ANSI_WALL = "\u001B[34m";
     private final String ANSI_RAT = "\u001B[37m";
-    private Block[][] blocks;
+    private Maze maze;
+    private final StringBuilder canvas = new StringBuilder();
 
-    public Console(Block[][] blocks) {
-        this.blocks = blocks;
+    public Console(Maze maze) {
+        this.maze = maze;
     }
 
     @Override
     public void draw() {
-        StringBuilder canvas = new StringBuilder();
-        for (int i = 0; i < blocks.length; i++) {
-            for (int j = 0; j < blocks[0].length; j++) {
+        canvas.append("\n".repeat(50));
+        for (int i = 0; i < maze.heigth(); i++) {
+            for (int j = 0; j < maze.width(); j++) {
             	
-            	if (blocks[i][j] == null) {
+            	if (maze.getBlock(i, j) == null) {
             		canvas.append("█");
             		continue;
             	}
 
-            	if (blocks[i][j].getObjects().isEmpty()) {
+            	if (maze.getBlock(i, j).isEmpty()) {
             		canvas.append("  ");
             		continue;
             	}
             	
-                GameObject object = blocks[i][j].getObjects().getLast();
+                GameObject object = maze.getBlock(i, j).getObjects().getLast();
                 
                 if (object instanceof Wall) {
                 	canvas.append(ANSI_WALL + "█" + ANSI_RESET);
@@ -44,9 +45,7 @@ public class Console implements UI {
                 } else if (object instanceof Target) {
                     canvas.append(ANSI_CHEESE + "█" + ANSI_RESET);
                 } else if (object instanceof Path) {
-                	canvas.append("-");
-                } else {
-                	canvas.append("█");
+                	canvas.append("·");
                 }
             }
             canvas.append("\n");
@@ -56,10 +55,6 @@ public class Console implements UI {
 
     @Override
     public void clear() {
-        StringBuilder canvas = new StringBuilder();
-    	for (int i = 0; i < 50; i++) {
-            canvas.append("\n");
-    	}
-        System.out.println(canvas);
+        canvas.setLength(0);
     }
 }

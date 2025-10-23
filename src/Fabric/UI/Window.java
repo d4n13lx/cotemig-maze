@@ -1,7 +1,5 @@
 package Fabric.UI;
 
-import Fabric.Types.UI;
-
 public class Window implements UI {
 
     @Override

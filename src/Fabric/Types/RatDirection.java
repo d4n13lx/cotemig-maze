@@ -1,26 +1,26 @@
-package Fabric.Objects.Rat;
+package Fabric.Types;
 
-public enum Direction {
+public enum RatDirection {
     UP(-1, 0) {
-        public Direction opposite() {
+        public RatDirection opposite() {
             return DOWN;
         }
     },
 
     DOWN(1, 0) {
-        public Direction opposite() {
+        public RatDirection opposite() {
             return UP;
         }
     },
 
     LEFT(0, 1) {
-        public Direction opposite() {
+        public RatDirection opposite() {
             return RIGHT;
         }
     },
     RIGHT
             (0, -1) {
-        public Direction opposite() {
+        public RatDirection opposite() {
             return LEFT;
         }
     };
@@ -28,7 +28,7 @@ public enum Direction {
     private final int x;
     private final int y;
 
-    Direction(int x, int y) {
+    RatDirection(int x, int y) {
         this.x = x;
         this.y = y;
     }
