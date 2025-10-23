@@ -14,14 +14,14 @@ import java.util.Stack;
 
 public class Rat extends GameObject implements Runnable {
 
-    private Maze maze;
-    private Winner winner;
-    private long waitTime;
+    private final Maze maze;
+    private final Winner winner;
+    private final long waitTime;
     private final UI ui;
-    private Stack<History> history = new Stack<>();
+    private final Stack<History> history = new Stack<>();
     
-    private int startX;
-    private int startY;
+    private final int startX;
+    private final int startY;
     
     public Rat(Maze maze, Winner winner, long waitTime, UI ui, int startX, int startY) {
         super();
@@ -31,11 +31,11 @@ public class Rat extends GameObject implements Runnable {
         this.ui = ui;
         this.startX = startX;
         this.startY = startY;
-        
+
         synchronized(maze.getAllBlocks()) {
             if (maze.getBlock(startX, startY) == null) {
                 maze.setBlock(startX, startY, new Floor());
-        	}
+            }
             maze.add(startX, startY, this);
         }
     }
@@ -71,15 +71,15 @@ public class Rat extends GameObject implements Runnable {
             }
             
             if (isSafe(stepX, stepY) && !isExplored(stepX, stepY)) {
-                render();
                 stepUpRat(stepX, stepY, ratDirection);
+                render();
 
                 if (backtrack(stepX, stepY)) return true;
                 
                 if (winner.getWinner() != null) return false;
 
-                render();
                 stepBackRat(x, y);
+                render();
             }
         }
         return false;
@@ -153,7 +153,7 @@ public class Rat extends GameObject implements Runnable {
         try {
             Thread.sleep(waitTime);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         	Thread.currentThread().interrupt();
         }
     }

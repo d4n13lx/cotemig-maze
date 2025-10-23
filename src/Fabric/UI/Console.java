@@ -20,7 +20,6 @@ public class Console implements UI {
 
     @Override
     public void draw() {
-        canvas.append("\n".repeat(50));
         for (int i = 0; i < maze.heigth(); i++) {
             for (int j = 0; j < maze.width(); j++) {
             	
@@ -56,5 +55,6 @@ public class Console implements UI {
     @Override
     public void clear() {
         canvas.setLength(0);
+        canvas.append("\n".repeat(50));
     }
 }

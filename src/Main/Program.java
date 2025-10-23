@@ -25,11 +25,11 @@ public class Program {
 
     	final int MAZE_WIDTH = scanner.nextInt();
 
-        System.out.println("Quantos ratos irão para o gulag?");
+        System.out.print("Quantos ratos irão para o gulag?\n> ");
 
     	final int N_RATS = scanner.nextInt();
 
-    	final long WAIT_TIME = 300;
+    	final long WAIT_TIME = 150;
     	
         Maze maze = new Maze(MAZE_HEIGHT, MAZE_WIDTH);
         Console ui = new Console(maze);
@@ -40,36 +40,46 @@ public class Program {
         maze.buildMaze(availableFloorTiles);
         
         List<Thread> ratThreads = new ArrayList<>();
-        
-        System.out.println("Número de ratos: " + N_RATS);
-        
+
+        // Spawn rats
         for (int i = 0; i < N_RATS; i++) {
         	int[] startPos = availableFloorTiles.remove(rand.nextInt(availableFloorTiles.size()));
-        	
+
         	if (maze.getTopObject(startPos[0], startPos[1]) instanceof Target) {
         		i--;
         		continue;
         	}
-        	
+
         	Rat rato = new Rat(maze, winner, WAIT_TIME, ui, startPos[0], startPos[1]);
-        	
+
         	Thread ratThread = new Thread(rato);
         	ratThreads.add(ratThread);
-        	ratThread.start();
         }
+
+        ui.draw();
+
+        System.out.print("Prévia do labirinto ^");
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        ratThreads.forEach(Thread::start);
         
         for (Thread t : ratThreads) {
         	try {
         		t.join();
         	} catch (InterruptedException e) {
-        		e.printStackTrace();
+                throw new RuntimeException(e);
         	}
         }
         
         if (winner.getWinner() != null) {
-			JOptionPane.showMessageDialog(null, "	BATTLE ROYALE #1\n\n" +
-					"O rato " + winner.getWinner().getID() + " achou o queijo!\n" +
-					"Ele deu " + winner.getWinner().getStepsTaken() + " passo(s) para a vitória.");
+            System.out.println("	BATTLE ROYALE #1\n\n" +
+                    "O rato " + winner.getWinner().getID() + " achou o queijo!\n" +
+                    "Ele deu " + winner.getWinner().getStepsTaken() + " passo(s) para a vitória.");
         } else {
         	System.out.println("Nenhum rato encontrou o queijo");
         }
